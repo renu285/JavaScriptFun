@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.block {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#OTAProgressBar {
+  width: 100%;
+  background-color: #ddd;
+}
+
+#CurrentProgress {
+  width: 1%;
+  height: 30px;
+  background-color: #4CAF50;
+}
+
+.block:hover {
+  background-color: #ddd;
+  color: black;
+}
+p {
+    color: black;
+    font-size: large;
+    text-align: center;
+}
+LogArea {
+    width: 600px;
+    height: 10em;
+}
+
+</style>
+<body style="background-color:#1c96ed">
+<h1 style="text-align:center">BLE OTA</h1>
+<button class="block" onclick="onButtonClick()">Scan and Select Device</button>
+<input type="file" id="OTAFile" onchange="showFile(this)">
+<p id="SelectedDev" ></p>
+<div id="OTAProgressBar">
+  <div id="CurrentProgress"></div>
+</div>
+<p id="LogArea"> </p>
+
+</body>
+</html>
+<script src="BLEOTA.js"></script>

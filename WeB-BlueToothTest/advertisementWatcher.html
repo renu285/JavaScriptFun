@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 4px 2px;
+  width:40%;
+  cursor: pointer;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 60%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  font-size: 100%;
+}
+</style>
+</head>
+<body>
+
+<h2>Advertisement Watcher test</h2>
+
+
+<button class="button" onclick="onStartScanClick()">Scan and Select Device</button>
+<button class="button" onclick="onStopScanClick()">Stop Scan</button>
+
+<p id="ClickedTable"> </p> 
+<table id="DeviceTable">
+  <tr>
+    <th>Device Name</th>
+    <th>RSSI</th>
+  </tr>
+</table>
+
+</body>
+
+<script>
+document.getElementById("DeviceTable").style.fontSize = "xx-large";
+
+
+    var rowCount = 1;
+    var scan;
+
+async function onStopScanClick(){
+    try {
+    console.log('Stopping scan...');
+    scan.stop();
+    console.log('Stopped.  scan.active = ' + scan.active);
+    }catch(error){
+        console.log('Argh! ' + error);
+  }
+}
+    
+async function onStartScanClick() {
+
+  let options = {};
+  options.acceptAllAdvertisements = true;
+
+  try {
+    console.log('Requesting Bluetooth Scan with options: ' + JSON.stringify(options));
+    scan = await navigator.bluetooth.requestLEScan(options);
+
+    console.log('Scan started with:');
+    console.log(' acceptAllAdvertisements: ' + scan.acceptAllAdvertisements);
+    console.log(' active: ' + scan.active);
+    console.log(' keepRepeatedDevices: ' + scan.keepRepeatedDevices);
+    console.log(' filters: ' + JSON.stringify(scan.filters));
+
+    navigator.bluetooth.addEventListener('advertisementreceived', event => {
+    
+        var Devicename = event.device.name;
+        if(event.device.name == null){
+            Devicename = event.device.id;
+        }
+        var rssi = event.rssi;
+        console.log("device : " + Devicename  + " " + "RSSI: " + rssi)
+        UpdateTable(Devicename,rssi);
+    });
+
+    setTimeout(stopScan, 10000);
+        function stopScan() {
+          console.log('Stopping scan...');
+          scan.stop();
+          console.log('Stopped.  scan.active = ' + scan.active);
+        }
+  } catch(error)  {
+        console.log('Argh! ' + error);
+  }
+}
+
+  function GetTheClickedDevice(str){
+    var para = document.getElementById("ClickedTable");
+    para.innerHTML = str.innerHTML;
+  }
+
+
+function UpdateTable(name,signalStrength) {
+
+    if (signalStrength < -70){
+        return;
+    }    
+    var table = document.getElementById("DeviceTable");
+    var row = table.insertRow(rowCount);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = String(name);
+    cell2.innerHTML = String(signalStrength);
+    rowCount = rowCount + 1;
+    
+    var table = document.getElementById("DeviceTable");
+    if (table != null) {
+        for (var i = 0; i < table.rows.length; i++) {
+            table.rows[i].onclick = function () {
+            console.log(this);
+             this.origColor=this.style.backgroundColor;
+             this.style.backgroundColor='#BCD4EC';
+             this.hilite = true;
+            GetTheClickedDevice(this.cells[0])
+            };
+        }
+    }
+}
+</script>
+  
+</script>
+
+</html>
